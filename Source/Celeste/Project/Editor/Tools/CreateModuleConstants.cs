@@ -12,9 +12,9 @@
 "    {\n" +
 "        base.Init();\n" +
 "\n" +
-"        Name = {3};\n" +
-"        BinaryModuleName = {3}\n;" +
-"        BuildNativeCode = {2};\n" +
+"        Name = {2};\n" +
+"        BinaryModuleName = {2}\n;" +
+"        BuildNativeCode = {3};\n" +
 "    }\n" +
 "\n" +
 "    public override void Setup(BuildOptions options)\n" +

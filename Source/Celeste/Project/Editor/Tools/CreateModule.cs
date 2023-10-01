@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 
 namespace CelesteEditor.Project
 {
@@ -7,26 +6,30 @@ namespace CelesteEditor.Project
     {
         public static void Create(CreateModuleArguments arguments)
         {
+            if (arguments.HasRuntimeModule)
+            {
+                CreateAssembly(arguments.RuntimeModuleInfo);
+            }
 
+            if (arguments.HasEditorModule)
+            {
+                CreateAssembly(arguments.EditorModuleInfo);
+            }
         }
 
-        public static string CreateAssembly(ModuleInfo moduleInfo)
+        public static void CreateAssembly(ModuleInfo moduleInfo)
         {
-            string directoryPath = !string.IsNullOrEmpty(parentDirectoryPath) ? Path.Combine(parentDirectoryPath, directoryName) : directoryName;
-            AssetUtility.CreateFolder(Path.Combine(directoryPath, "Scripts"));
+            Directory.CreateDirectory(moduleInfo.ModuleDirectoryPath);
 
-            AsmDef assemblyDef = new AsmDef();
-            assemblyDef.autoReferenced = true;
-            assemblyDef.rootNamespace = assemblyNamespace;
-            assemblyDef.name = assemblyName;
-            assemblyDef.references = references != null ? references.ToArray() : null;
-            assemblyDef.includePlatforms = includePlatforms != null ? includePlatforms.ToArray() : null;
+            string formattedBuildFile = string.Format(
+                CreateModuleConstants.MODULE_DEFINITION,
+                moduleInfo.ModuleBuildScriptClassName,
+                moduleInfo.IsEditorModule ? "GameEditorModule" : "GameModule",
+                moduleInfo.ModuleName,
+                moduleInfo.ShouldModuleBuildNativeCode);
 
-            string scriptsDirectory = Path.Combine(directoryPath, "Scripts");
-            File.WriteAllText(Path.Combine(scriptsDirectory, $"{assemblyName}.asmdef"), JsonUtility.ToJson(assemblyDef, true));
-            File.WriteAllText(Path.Combine(scriptsDirectory, PLACEHOLDER_SCRIPT_NAME), "");
-
-            return scriptsDirectory;
+            string buildFilePath = Path.Combine(moduleInfo.ModuleDirectoryPath, $"{moduleInfo.ModuleName}.Build.cs");
+            File.WriteAllText(buildFilePath, formattedBuildFile);
         }
     }
 }

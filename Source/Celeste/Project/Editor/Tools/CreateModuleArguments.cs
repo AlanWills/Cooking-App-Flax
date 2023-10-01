@@ -1,4 +1,6 @@
-﻿using FlaxEngine;
+﻿using FlaxEditor.Modules;
+using FlaxEngine;
+using System.IO;
 
 namespace CelesteEditor.Project
 {
@@ -7,11 +9,30 @@ namespace CelesteEditor.Project
         public string ModuleDirectoryPath;
         public string ModuleBuildScriptClassName;
         public string ModuleName;
+        public bool IsEditorModule;
         public bool ShouldModuleBuildNativeCode;
     }
 
     public struct CreateModuleArguments
     {
+        public ModuleInfo RuntimeModuleInfo => new ModuleInfo()
+        {
+            IsEditorModule = false,
+            ModuleName = RuntimeModuleName,
+            ModuleBuildScriptClassName = RuntimeModuleBuildScriptClassName,
+            ModuleDirectoryPath = Path.Combine(ParentDirectory, DirectoryName, "Runtime"),
+            ShouldModuleBuildNativeCode = ShouldRuntimeModuleBuildNativeCode
+        };
+
+        public ModuleInfo EditorModuleInfo => new ModuleInfo()
+        {
+            IsEditorModule = true,
+            ModuleName = EditorModuleName,
+            ModuleBuildScriptClassName = EditorModuleBuildScriptClassName,
+            ModuleDirectoryPath = Path.Combine(ParentDirectory, DirectoryName, "Editor"),
+            ShouldModuleBuildNativeCode = ShouldEditorModuleBuildNativeCode
+        };
+
         [Tooltip("The full path of the directory that the module's directory will be created in")] public string ParentDirectory;
         [Tooltip("The name of the module's directory that sub directories and files will be created in")] public string DirectoryName;
 
